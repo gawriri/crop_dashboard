@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Crop Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f8faf9;
+      text-align: center;
+    }
+
+    h1 {
+      color: #5f8f7b;
+    }
+
+    .controls {
+      margin: 20px;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .cards {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px;
+    }
+
+    .card-small {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      width: 150px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      width: 400px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Crop Production Dashboard</h1>
+
+  <!-- DROPDOWN -->
+  <div class="controls">
+    <label>Select Year:</label>
+    <select id="yearSelect">
+      <option value="2018">2018</option>
+      <option value="2019">2019</option>
+      <option value="2020">2020</option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+    </select>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="cards">
+    <div class="card-small">
+      <h4>Total</h4>
+      <p id="totalValue">--</p>
+    </div>
+
+    <div class="card-small">
+      <h4>Kharif</h4>
+      <p id="kharifValue">--</p>
+    </div>
+
+    <div class="card-small">
+      <h4>Rabi</h4>
+      <p id="rabiValue">--</p>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="container">
+
+    <div class="card">
+      <h3>Production Trend</h3>
+      <canvas id="yearChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Season Comparison (Overall)</h3>
+      <canvas id="seasonChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Season Comparison (Selected Year)</h3>
+      <canvas id="dynamicChart"></canvas>
+    </div>
+
+  </div>
+
+  <script>
+    // YEAR TREND
+    fetch("http://127.0.0.1:8000/year-trend")
+      .then(res => res.json())
+      .then(data => {
+        new Chart(document.getElementById("yearChart"), {
+          type: "line",
+          data: {
+            labels: Object.keys(data),
+            datasets: [{
+              label: "Production",
+              data: Object.values(data),
+              borderColor: "#a8d5ba",
+              backgroundColor: "rgba(168,213,186,0.3)",
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            }]
+          }
+        });
+      });
+
+    // OVERALL SEASON
+    fetch("http://127.0.0.1:8000/season")
+      .then(res => res.json())
+      .then(data => {
+        new Chart(document.getElementById("seasonChart"), {
+          type: "bar",
+          data: {
+            labels: ["Kharif", "Rabi"],
+            datasets: [{
+              data: [data.kharif, data.rabi],
+              backgroundColor: ["#a8d5ba", "#f6c1c7"]
+            }]
+          }
+        });
+      });
+
+    // DYNAMIC CHART
+    let dynamicChart;
+
+    function loadYear(year) {
+      fetch(`http://127.0.0.1:8000/year/${year}`)
+        .then(res => res.json())
+        .then(data => {
+
+          document.getElementById("totalValue").innerText = data.total.toFixed(0);
+          document.getElementById("kharifValue").innerText = data.kharif.toFixed(0);
+          document.getElementById("rabiValue").innerText = data.rabi.toFixed(0);
+
+          if (dynamicChart) dynamicChart.destroy();
+
+          dynamicChart = new Chart(document.getElementById("dynamicChart"), {
+            type: "bar",
+            data: {
+              labels: ["Kharif", "Rabi"],
+              datasets: [{
+                data: [data.kharif, data.rabi],
+                backgroundColor: ["#a8d5ba", "#f6c1c7"]
+              }]
+            }
+          });
+        });
+    }
+
+    document.getElementById("yearSelect").addEventListener("change", (e) => {
+      loadYear(e.target.value);
+    });
+
+    // default load
+    loadYear("2018");
+  </script>
+
+</body>
+</html>
