@@ -112,7 +112,7 @@
 
   <script>
     // YEAR TREND
-    fetch("http://127.0.0.1:8000/year-trend")
+    fetch("https://crop-dashboard-abwy.onrender.com")
       .then(res => res.json())
       .then(data => {
         new Chart(document.getElementById("yearChart"), {
@@ -133,7 +133,7 @@
       });
 
     // OVERALL SEASON
-    fetch("http://127.0.0.1:8000/season")
+    fetch("https://crop-dashboard-abwy.onrender.com/season")
       .then(res => res.json())
       .then(data => {
         new Chart(document.getElementById("seasonChart"), {
@@ -152,7 +152,7 @@
     let dynamicChart;
 
     function loadYear(year) {
-      fetch(`http://127.0.0.1:8000/year/${year}`)
+      fetch(`https://crop-dashboard-abwy.onrender.com/year/${year}`)
         .then(res => res.json())
         .then(data => {
 
