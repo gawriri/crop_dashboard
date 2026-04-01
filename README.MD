@@ -21,7 +21,7 @@ Visualization: Chart.js
 Project Structure
 backend: FastAPI application and data processing
 frontend: dashboard UI
-data: raw datasets
+data: raw datasets(https://www.data.gov.in/)
 notebooks: exploratory analysis
 
 Key Insights
