@@ -45,6 +45,7 @@ Deploy dashboard online
 Add predictive analysis
 
 Live Demo  
-https://playful-paletas-5a829a.netlify.app/
+https://69cd18fa0ecdb23b1f7d7beb--playful-paletas-5a829a.netlify.app/
+
 Backend API  
 https://crop-dashboard-abwy.onrender.com
